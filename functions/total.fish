@@ -1,0 +1,1 @@
+/home/kau/.config/fish/functions/total.fish
