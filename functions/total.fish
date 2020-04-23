@@ -1,6 +1,6 @@
 #!/bin/fish
 
-# Req: 
+# Req:
 #   cat
 #   tr
 
@@ -55,7 +55,7 @@ function total -d "<STDIN> | total, or total N1 N2 N3 [..]"
     if test (count $argv) -eq 0
       echo 'At least '(switch $minargs; case 1; echo one number; case 2: echo two numbers;end)\
         ' must be given' 1>&2
-    end 
+    end
     $repl -- $argpad $argv | string join -- $joiner | math $mathargs
-  end 
+  end
 end

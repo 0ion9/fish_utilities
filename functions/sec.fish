@@ -1,6 +1,6 @@
 #!/bin/fish
 
-# Req: 
+# Req:
 #   'total' function
 
 function sec -d '[y.][d.][h.][m.]<s> to plain seconds count.'
@@ -17,7 +17,7 @@ function sec -d '[y.][d.][h.][m.]<s> to plain seconds count.'
     echo '                  , and : are also accepted as separators'
     echo '   (with -x): Series of time units with marking immediately following a number, no separators required.'
     echo '              Valid markings are one of YMwdhms.'
-    echo 
+    echo
     echo '  -d:  Defines the length of a day as 16 hours rather than 24 hours.'
     echo '       This affects the size of units Y, M, w, d.'
     echo '  -x:  Use extended time format rather than positional. See above for details.'
@@ -29,7 +29,7 @@ function sec -d '[y.][d.][h.][m.]<s> to plain seconds count.'
              '4.10.30 : as above' \
              '4h10m30s : as above, with -x' \
              '360 : 6 minutes, without -x (note that sec effectively is a passthru op here, since the input is only a raw seconds count)' \
-	     '4h 4h 4h  : 12 hours (multiple arguments are added together)' 
+	     '4h 4h 4h  : 12 hours (multiple arguments are added together)'
       echo '   '$v
     end
 
@@ -42,7 +42,7 @@ function sec -d '[y.][d.][h.][m.]<s> to plain seconds count.'
     set expr [0-9.YMwdhms]+
   end
   if test (count $t) -gt (count (string match -r '^'$expr'$' -- $t))
-    echo (status function)": input '$argv' contains invalid characters. $expr are accepted. " 1>&2 
+    echo (status function)": input '$argv' contains invalid characters. $expr are accepted. " 1>&2
     return 1
   end
   # Y D H M S
@@ -51,14 +51,14 @@ function sec -d '[y.][d.][h.][m.]<s> to plain seconds count.'
   end
 
   if test -n "$_flag_x"
-    set -l buf 
+    set -l buf
     for v in Y M w d h m s
       set -a buf 0
       for m in (string match -ar [0-9]+$v $t)
 #        echo "M $m" 1>&2
         set buf[-1] (math "$buf[-1]+"(string match -r [0-9]+ $m))
       end
-    end 
+    end
     set t $buf
   end
 
@@ -68,7 +68,7 @@ function sec -d '[y.][d.][h.][m.]<s> to plain seconds count.'
       continue
     end
     if set -q t[$i]
-      # XXX 
+      # XXX
       set t[$i] (math "$t[$i]*$f")
     end
   end
