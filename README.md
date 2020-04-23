@@ -11,5 +11,14 @@ More to come:
 * `expand-words` : Basic 'word expansion' of stdin - `echo 'x * y' | expand-words x 5 y 10` -> `5 * 10`
 * `imgw` : create high quality 'reduced sample' versions of large images, usable as, for example,
    an index.
+* `pseudohash` : generate 4-character 'hashes' based on automatically incrementing serial numbers salted with the 'series name'. This gives
+  'somewhat memorable, mostly unique ids'   for up to 8 million items within a given 'series'. Hashes are portable between systems. 
+  `pseudohash` -> `O2cq` (assuming you've never used pseudohash before);
+  `pseudohash pages` -> `4Rnc`; `pseudohash logs` -> `7jXR`
+  Position within the sequence for a given series-id is stored in the universal variable `__pseudohash_$id`
+  (eg `__pseudohash_pages`). To get further hashes, just call it again with the same series id, eg `pseudohash logs` -> `uXVl`.
+  Intent was to create a compact form of cross-referencing for documents that could be easily tagged onto the document (via eg. `tmsu`), or
+  directly marked onto it (in the case of a drawing or diagram)
+
 
 * ..etc
