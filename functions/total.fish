@@ -2,14 +2,26 @@
 
 # Req:
 #   cat
-#   tr
 
-# XXX technically this should be named 'reduce', but the most common usage
-# is as a totaller.
+# XXX refactor to:
+#
+#   reduce
+#     sum / total == reduce -o +
+#     product == reduce -o x
 
 function total -d "<STDIN> | total, or total N1 N2 N3 [..]"
   # XXX be more accurate with '-s' -- accept 'max', since 'math' does.
-  argparse -i h/help o/operator='!string match -qr "^[+/*x-]\$"' s/scale='!_validate_int --min 0 --max 99' -- $argv
+  set -l retval 0
+  if not argparse -i h/help o/operator='!contains "$_flag_value" - + "*" x /' s/scale='!_validate_int --min 0 --max 99' -- $argv
+    set retval 1
+    set _flag_h 1
+  end
+
+  if test -n "$_flag_h"
+    echo 'Help (stubbed)'
+    return $retval
+  end
+
   set -l joiner +
   set -l minargs 1
   # expands to empty if _flag_s is unset -- see `help expand` for why.
@@ -17,8 +29,9 @@ function total -d "<STDIN> | total, or total N1 N2 N3 [..]"
   set -l argpad 0
   set -l repl string replace --filter -ar '^(.+)$' '($1)'
   if test -n "$_flag_o"
+    test "$_flag_o" = x; and set _flag_o '*'
     switch "$_flag_o"
-      case '\*' x / + -
+      case '\*' / + -
         set joiner "$_flag_o"
         if string match -qrv -- '[+*x]' "$_flag_o"
           set minargs 2
@@ -50,12 +63,12 @@ function total -d "<STDIN> | total, or total N1 N2 N3 [..]"
     begin;
       cat -
       printf '%s\n' $argpad $argv
-    end |tr -d ' ' | $repl |  string join -- $joiner | math $mathargs
+    end |string replace -a ' ' '' | $repl |  string join -- $joiner | math $mathargs
   else
     if test (count $argv) -eq 0
       echo 'At least '(switch $minargs; case 1; echo one number; case 2: echo two numbers;end)\
         ' must be given' 1>&2
     end
-    $repl -- $argpad $argv | string join -- $joiner | math $mathargs
+    string replace -a ' ' '' -- $argpad $argv | $repl | string join -- $joiner | math $mathargs
   end
 end

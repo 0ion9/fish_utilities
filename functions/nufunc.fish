@@ -1,5 +1,9 @@
 #!/bin/fish
 
+# Changelog:
+#   2020-04-26:  Don't use eval
+#                Don't use sed
+
 function nufunc
   argparse f/from= i/import= -- $argv
 
@@ -16,8 +20,7 @@ function nufunc
         echo "Template file $v doesn't exist or is not a regular file. Exiting."
         exit
       else
-        cp -av -- $srcfile $file
-        sed -iEe "s,function $_flag_from,function $func," $file
+        string replace -air "function "(string escape --style regex -- $_flag_from)'\b' "function $func" < $srcfile > $file
       end
     else
       printf "#!/bin/fish\n\nfunction $func\n\nend" > $file
@@ -30,5 +33,5 @@ function nufunc
     set -a cmd $argv[2..-1]
   end
 
-  eval $cmd
+  $cmd
 end

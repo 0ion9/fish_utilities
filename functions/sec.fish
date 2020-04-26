@@ -3,15 +3,20 @@
 # Req:
 #   'total' function
 
+# changelog:
+#   20200426 : Document value omission
+#              Document behaviour of "overlarge" values, eg. 100 seconds
+#              Better synopsis
+#
+
 function sec -d '[y.][d.][h.][m.]<s> to plain seconds count.'
-  # support : and , as separators
-  # Also support implicit 0: h..s == $h hours, 0 minutes, $s seconds
+  # XXX maybe make -x default and instead have -p/--places meaning the current place-based behaviour
   if not argparse -i d/day x/extended h/help -- $argv
     return 1
   end
   if test -n "$_flag_h"
     echo 'Syntax: '(status function)' [-x] [-d] TIMESPEC'
-    echo '  Returns the number of seconds described by TIMESPEC.'
+    echo '  Sum all TIMESPECs and return the total number of seconds'
     echo '  TIMESPEC may be:'
     echo '   (without -x) : Simple list of time units, without marking, in the format [[[[[[[Y.]M.]w.]d.]h.]m.]s]'
     echo '                  , and : are also accepted as separators'
@@ -27,12 +32,15 @@ function sec -d '[y.][d.][h.][m.]<s> to plain seconds count.'
              '10m30s : as above, with -x' \
              '4:10.30 : 4 hours, ten minutes and 30 seconds, without -x' \
              '4.10.30 : as above' \
-             '4h10m30s : as above, with -x' \
+             '4..30   : 4 hours and 30 seconds (an empty field is equivalent to a value of 0)'
+             '4h30s : as above, with -x' \
              '360 : 6 minutes, without -x (note that sec effectively is a passthru op here, since the input is only a raw seconds count)' \
 	     '4h 4h 4h  : 12 hours (multiple arguments are added together)'
+             '5.100 or 5m100s : "5 minutes and 100 seconds", ie. 6m40. '
+             '4h5h6h30s40s : 17 hours, 1 minute, and 10 seconds. This "just pile more units on" approach is supported by -x'
+             '               if for some reason you need to do things that way.'
       echo '   '$v
     end
-
     return 0
   end
   set -l t (string replace -ar '[:,]' . -- $argv | string split . | string replace -r '^$' 0)
@@ -45,7 +53,7 @@ function sec -d '[y.][d.][h.][m.]<s> to plain seconds count.'
     echo (status function)": input '$argv' contains invalid characters. $expr are accepted. " 1>&2
     return 1
   end
-  # Y D H M S
+
   if test -n "$_flag_d"
     set units Y:-7:21024000 M:-6:1728000 w:-5:403200 d:-4:57600 h:-3:3600 m:-2:60 s:-1:1
   end
@@ -55,7 +63,6 @@ function sec -d '[y.][d.][h.][m.]<s> to plain seconds count.'
     for v in Y M w d h m s
       set -a buf 0
       for m in (string match -ar [0-9]+$v $t)
-#        echo "M $m" 1>&2
         set buf[-1] (math "$buf[-1]+"(string match -r [0-9]+ $m))
       end
     end
@@ -68,7 +75,6 @@ function sec -d '[y.][d.][h.][m.]<s> to plain seconds count.'
       continue
     end
     if set -q t[$i]
-      # XXX
       set t[$i] (math "$t[$i]*$f")
     end
   end
