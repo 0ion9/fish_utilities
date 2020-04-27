@@ -2,7 +2,8 @@ Various utility functions for fish
 
 * `total` : sum a list of numbers (or do other basic arithmetic reductions). `total 1 2 3` -> 6; `seq 4 | total` -> 10; `total -o\* 2 3` -> 6
 * `sec` : convert 'counts of units' or 'human readable' durations (eg. `sec 1 2 1 0 4 0 30`, `sec -x 1Y2M1w4h30s`) into raw second count
-* `nufunc` : create a new function in ~/.config/fish/functions/$funcname.fish and edit it (or just edit it if it already exists). eg. `nufunc fillpath`
+* `nufunc` : create a new function in ~/.config/fish/functions/$funcname.fish and edit it (or just edit it if it already exists).
+   Reload it after editing. eg. `nufunc fillpath`
 * `funcfile` : functions -D ('get the filename this function was defined in') generalized to any number of functions, so you can eg. `geany nufunc funcfile reloadfunc`
 * `reloadfunc` : Reload functions by name, if they were defined in a file.
 * `fillpath` : add path and or extension components to a path if they are not yet included. `fillpath -p ~/Desktop -e png foobar` -> `/home/me/Desktop/foobar.png`; `fillpath -p ~/Desktop -e png foobar.jpg` -> `/home/me/Desktop/foobar.jpg`

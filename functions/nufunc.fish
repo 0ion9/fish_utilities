@@ -3,6 +3,8 @@
 # Changelog:
 #   2020-04-26:  Don't use eval
 #                Don't use sed
+#   2020-04-27:  Automatically reload
+#
 
 function nufunc
   argparse f/from= i/import= -- $argv
@@ -11,6 +13,10 @@ function nufunc
   set -l file ~/.config/fish/functions/$func.fish
 
   # XXX implement --import (bring in function defined in environment, using 'type')
+  #
+  # XXX add some kind of support for GUI editor / backgrounded editing; inotifywatch -> reload on first
+  # CLOSE_WRITE?
+  #
   if test -e $file
     echo "Not overwriting $file, editing only"
   else
@@ -34,4 +40,5 @@ function nufunc
   end
 
   $cmd
+  source $file
 end
